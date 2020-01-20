@@ -1,10 +1,11 @@
 FROM golang
 
-ADD . /src
+ADD ./src /go/src/api-randint
 
 RUN go get github.com/gorilla/mux
-RUN go install main
 
-ENTRYPOINT /src
+RUN go install api-randint
 
-EXPOSE 8081
+ENTRYPOINT /go/bin/api-randint
+
+EXPOSE 5000
