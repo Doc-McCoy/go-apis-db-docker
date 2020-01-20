@@ -1,16 +1,26 @@
 version: "3"
 
 services:
-    api:
-        container_name: api
+    api-randint:
+        container_name: api-randint
         build: ./api-randint
         volumes: 
             - ./api-randint:/app
         ports:
             - "5000:5000"
 
-    database:
-        container_name: postgres
+    api-agenda:
+        container_name: api-agenda
+        build: ./api-agenda
+        volumes: 
+            - ./api-agenda:/app
+        ports:
+            - "8080:8080"
+        depends_on:
+            - database-pg
+
+    database-pg:
+        container_name: database-pg
         image: postgres
         restart: always
         environment: 

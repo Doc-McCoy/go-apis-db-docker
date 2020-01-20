@@ -1,7 +1,7 @@
 CREATE TABLE contato (
     id serial,
     nome VARCHAR(40) NOT NULL,
-    numero = VARCHAR(11) NOT NULL,
+    numero VARCHAR(11) NOT NULL,
     random INT,
     PRIMARY KEY(id)
 );
