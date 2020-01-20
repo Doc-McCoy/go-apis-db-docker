@@ -1,6 +1,14 @@
 version: "3"
 
 services:
+    api:
+        container_name: api
+        build: ./api-randint
+        volumes: 
+            - ./api-randint:/app
+        ports:
+            - "5000:5000"
+
     database:
         container_name: postgres
         image: postgres
