@@ -55,6 +55,11 @@ type Person struct {
 	Random 	string 	`json:"random"`
 }
 
+type Message struct {
+	Title 	string `json:"title"`
+	Message string `json:"message"`
+}
+
 func GetAllPeople(w http.ResponseWriter, r *http.Request) {
 	var persons []Person
 
@@ -121,8 +126,9 @@ func CreatePeople(w http.ResponseWriter, r *http.Request) {
 		panic(err.Error())
 	}
 
-	// w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "Novo contato criado!")
+	w.Header().Set("Content-Type", "application/json")
+	message := Message{"Info", "Contato criado com sucesso!"}
+	json.NewEncoder(w).Encode(message)
 }
 
 func DeletePeople(w http.ResponseWriter, r *http.Request) {
@@ -134,6 +140,7 @@ func DeletePeople(w http.ResponseWriter, r *http.Request) {
 	}
 	defer query.Close()
 
-	// w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "Contato deletado!")
+	w.Header().Set("Content-Type", "application/json")
+	message := Message{"Info", "Contato deletado com sucesso!"}
+	json.NewEncoder(w).Encode(message)
 }
