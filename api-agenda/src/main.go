@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"log"
 	"encoding/json"
 	"net/http"
@@ -43,6 +44,7 @@ func main() {
 	router.HandleFunc("/contato", GetAllPeople).Methods("GET")
 	router.HandleFunc("/contato/{id}", GetPeople).Methods("GET")
 	router.HandleFunc("/contato", CreatePeople).Methods("POST")
+	router.HandleFunc("/contato/{id}", EditPeople).Methods("PUT")
 	router.HandleFunc("/contato/{id}", DeletePeople).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8080", router))
@@ -128,6 +130,46 @@ func CreatePeople(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	message := Message{"Info", "Contato criado com sucesso!"}
+	json.NewEncoder(w).Encode(message)
+}
+
+
+func EditPeople(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	decoder := json.NewDecoder(r.Body)
+	var updateFields []string
+	var updateQuery string
+
+	var person Person
+
+	err := decoder.Decode(&person)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if person.Nome != "" {
+		updateFields = append(updateFields, fmt.Sprintf("nome = '%s' ", person.Nome))
+	}
+
+	if person.Numero != "" {
+		updateFields = append(updateFields, fmt.Sprintf("numero = '%s' ", person.Numero))
+	}
+
+	updateQuery = strings.Join(updateFields, ", ")
+	sqlQuery := fmt.Sprintf("UPDATE contato SET %s WHERE id = $1", updateQuery)
+
+	stmt, err := db.Prepare(sqlQuery)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = stmt.Exec(params["id"])
+	if err != nil {
+		panic(err.Error())
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	message := Message{"Info", "Contato editado com sucesso!"}
 	json.NewEncoder(w).Encode(message)
 }
 
